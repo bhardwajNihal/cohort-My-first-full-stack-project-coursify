@@ -1,7 +1,7 @@
 
 const Router = require("express")
 const adminrouter = Router()
-
+const { adminModel } = require("../db")
 
 adminrouter.post("/signup", (req,res)=>{
     res.send("admin signed up successfully!")

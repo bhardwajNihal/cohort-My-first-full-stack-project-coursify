@@ -1,6 +1,7 @@
 
 const Router = require("express")
 const userrouter = Router()
+const { userModel } = require("../db")
 
 // all the route handlers for request on /user endpoint
     userrouter.post("/signup", (req,res)=>{

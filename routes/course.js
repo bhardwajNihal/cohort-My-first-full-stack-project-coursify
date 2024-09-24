@@ -1,5 +1,7 @@
 const Router = require("express")
 const courserouter = Router();
+const { courseModel } = require("../db")
+const { purchaseModel } = require("../db")
 
 courserouter.get("/preview", (req,res)=>{               //endpoint to see all couses available
     res.send("here are all the courses available")
