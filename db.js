@@ -8,7 +8,6 @@ const mongodb_connectionString = process.env.mongodb_connectionString;
 (async function connectToDb(){
     await mongoose.connect(mongodb_connectionString);
 }) ()
-console.log("connection string", mongodb_connectionString);
 
 
 //defining schemas
