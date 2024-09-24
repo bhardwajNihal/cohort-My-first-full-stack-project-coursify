@@ -2,14 +2,6 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const ObjectId = mongoose.Types.ObjectId;
 
-require('dotenv').config();
-const mongodb_connectionString = process.env.mongodb_connectionString;
-
-(async function connectToDb(){
-    await mongoose.connect(mongodb_connectionString);
-}) ()
-
-
 //defining schemas
 const userSchema = new Schema({
     firstname : {type : String, required : true},
