@@ -7,9 +7,34 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const JWT_SECRET = process.env.JWT_SECRET;
+const zod = require("zod");
 
 // all the route handlers for request on /user endpoint
     userrouter.post("/signup", async(req,res)=>{
+        //validating input 
+        const validInput = zod.object({
+            firstname : zod.string().min(2).max(100),
+            lastname : zod.string().min(2).max(100),
+            email : zod.string().email().max(100),
+            password : zod.string()
+            .min(6, "Password must be at least 6 characters long")
+            .max(100)
+            .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+            .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+            .regex(/[\W_]/, "Password must contain at least one special character")
+        })
+
+        const validateInputData = validInput.safeParse(req.body)        //safely parse the req.body a/c to validInput
+
+        if(!validateInputData.success){
+            res.status(402).json({
+                msg : "invalid input format",
+                error : validateInputData.error.errors
+            })
+            return;
+        }
+
+        //finally, once the inputs are validated, 
         const firstname = req.body.firstname;
         const lastname = req.body.lastname;
         const email = req.body.email;
