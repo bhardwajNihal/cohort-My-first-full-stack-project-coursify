@@ -92,6 +92,7 @@ const zod = require("zod");
         },JWT_SECRET);
 
         res.json({
+            msg : "user signed in successfully!",
             token : token
         })
 
