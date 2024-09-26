@@ -1,13 +1,14 @@
 
 const Router = require("express")
 const adminrouter = Router()
-const { adminModel } = require("../db")
+const { adminModel, courseModel } = require("../db")
 const { default: mongoose } = require("mongoose");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const JWT_SECRET_ADMIN = process.env.JWT_SECRET_ADMIN;
 const zod = require("zod");
+const { adminAuth } = require('../middlewares/admin')
 
 
 adminrouter.post("/signup", async(req,res)=>{
@@ -83,7 +84,7 @@ adminrouter.post("/signin", async(req,res)=>{
     }
 
     const token = jwt.sign({
-        id : foundAdmin._id
+        id : foundAdmin._id.toString()
     },JWT_SECRET_ADMIN)
 
     res.json({
@@ -92,17 +93,31 @@ adminrouter.post("/signin", async(req,res)=>{
     })
 })
 
-adminrouter.post("/createcourse", (req,res)=>{
-    res.send("create a new course")
+adminrouter.post("/createcourse",adminAuth, async(req,res)=>{
+    const creatorId = req.id;
+
+    // as the admin is authenticated, he is authorized to create a course
+    const{ title, description, price, imageUrl } = req.body;
+
+    await courseModel.create({
+        title,description,price,imageUrl,creatorId
+    })
+
+    res.json({
+        msg : "course created successfully!!!"
+    })
+})
+
+adminrouter.put("/updatecourse",adminAuth, async(req,res)=>{
+    // const creatorId = req.id;
+    // const{title,description,price,imageUrl} = req.body;
+    
 })
 
 adminrouter.post("/deletecourse", (req,res)=>{
     res.send("delete a course")
 })
 
-adminrouter.post("/addcoursecontent", (req,res)=>{
-    res.send("add more content to existing courses")
-})
 
 module.exports = {
     adminrouter : adminrouter

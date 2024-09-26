@@ -6,8 +6,9 @@ const { default: mongoose } = require("mongoose");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET_USER = process.env.JWT_SECRET_USER;
 const zod = require("zod");
+const { userAuth } = require("../middlewares/user")
 
 // all the route handlers for request on /user endpoint
     userrouter.post("/signup", async(req,res)=>{
@@ -89,7 +90,7 @@ const zod = require("zod");
 
         const token = jwt.sign({
             id : finduser._id.toString()
-        },JWT_SECRET);
+        },JWT_SECRET_USER);
 
         res.json({
             msg : "user signed in successfully!",
@@ -101,7 +102,7 @@ const zod = require("zod");
     userrouter.get("/purchases", (req,res)=>{             //endpoint to see all the purchased course
         const recievedToken = req.headers.token;
 
-        const verifiedResponse = jwt.verify(recievedToken,JWT_SECRET)
+        const verifiedResponse = jwt.verify(recievedToken,JWT_SECRET_USER)
 
         if(!verifiedResponse){
             res.status(404).json({
