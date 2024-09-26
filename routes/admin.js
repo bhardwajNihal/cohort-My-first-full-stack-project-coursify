@@ -109,13 +109,39 @@ adminrouter.post("/createcourse",adminAuth, async(req,res)=>{
 })
 
 adminrouter.put("/updatecourse",adminAuth, async(req,res)=>{
-    // const creatorId = req.id;
-    // const{title,description,price,imageUrl} = req.body;
+    
+    const creatorId = req.id;
+
+    const { title, description, price, imageUrl, courseId } = req.body;
+
+    await courseModel.updateOne({
+    //filters to find the course to be updated, has its own id and the creator id, to make sure only the authorized created can update
+        _id : courseId,
+        creatorId : creatorId
+    },{
+        title,description,price,imageUrl
+    })
+
+    res.json({
+        msg : "course updated successfully!",
+        courseId : courseId
+    })
     
 })
 
+adminrouter.get("/allCourses",adminAuth, async(req,res)=>{
+    const creatorId = req.id;
+
+    const courses = await courseModel.find({creatorId});
+
+    res.json({
+        courses
+    })
+
+})
+
+
 adminrouter.post("/deletecourse", (req,res)=>{
-    res.send("delete a course")
 })
 
 
