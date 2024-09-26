@@ -129,7 +129,7 @@ adminrouter.put("/updatecourse",adminAuth, async(req,res)=>{
     
 })
 
-adminrouter.get("/allCourses",adminAuth, async(req,res)=>{
+adminrouter.get("/allCourses",adminAuth, async(req,res)=>{      //give all the courses created by that creator
     const creatorId = req.id;
 
     const courses = await courseModel.find({creatorId});
@@ -138,10 +138,6 @@ adminrouter.get("/allCourses",adminAuth, async(req,res)=>{
         courses
     })
 
-})
-
-
-adminrouter.post("/deletecourse", (req,res)=>{
 })
 
 

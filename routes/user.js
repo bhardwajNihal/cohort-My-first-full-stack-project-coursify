@@ -1,16 +1,18 @@
 
 const Router = require("express")
 const userrouter = Router()
-const { userModel } = require("../db");
+const { userModel, purchaseModel, courseModel } = require("../db");
 const { default: mongoose } = require("mongoose");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const JWT_SECRET_USER = process.env.JWT_SECRET_USER;
 const zod = require("zod");
-const { userAuth } = require("../middlewares/user")
+const { userAuth } = require("../middlewares/user");
+const course = require("./course");
 
 // all the route handlers for request on /user endpoint
+
     userrouter.post("/signup", async(req,res)=>{
         //validating input 
         const validInput = zod.object({
@@ -99,18 +101,20 @@ const { userAuth } = require("../middlewares/user")
 
     })
 
-    userrouter.get("/purchases", (req,res)=>{             //endpoint to see all the purchased course
-        const recievedToken = req.headers.token;
+    userrouter.get("/purchases",userAuth, async(req,res)=>{             //endpoint to see all the purchased course
+        const userId = req.userId;
 
-        const verifiedResponse = jwt.verify(recievedToken,JWT_SECRET_USER)
+        const purchases = await purchaseModel.find({
+            userId
+        })
+        const courseData = await courseModel.find({
+            _id : { $in : purchases.map( item => item.courseId)}
+        })
 
-        if(!verifiedResponse){
-            res.status(404).json({
-                msg : "invalid token, please signin again!"
-            })
-            return;
-        }
-        res.send("here are your purchases : \ncourse-1\ncourse-2\ncourse-3")
+        res.json({
+            purchases,
+            courseData
+        })
     })
 
 module.exports = {
